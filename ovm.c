@@ -133,8 +133,8 @@ void generate_process() {
 		temp->pid = pids;
 		pids++;
 		temp->starttime = difftime(time(NULL), start);
-		temp->mem_need = (rng() % MEM_SIZE/2)+1;
-		temp->ctime_need = (rng() % 10)+1;
+		temp->mem_need = (rand() % MEM_SIZE/2)+1;
+		temp->ctime_need = (rand() % 10)+1;
 		temp->next = NULL;
 		temp->tspent = 0;
 		temp->mem_alloc = -1;
@@ -343,7 +343,7 @@ void run() {
 
 	while(1) {
 
-		if(rng()%1000 <= 200) generate_process();
+		if(rand()%10 < 2) generate_process();
 		tick();
 		handle();
 		system("clear");
