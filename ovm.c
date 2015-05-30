@@ -3,7 +3,7 @@
 #include "time.h"
 #include "math.h"
 
-#define MEM_SIZE 16
+#define MEM_SIZE 64
 #define HANDLER_TIMEOUT 5
 
 void sleep(int ms);
@@ -19,6 +19,8 @@ int cpu_strategy = 1; //0 = FCFS, 1 = Round Robin, 2 = SRTN, 3 = BFN, 4 = FFN
 int pids = 1;
 time_t start;
 int handler_flag = 1;
+
+int GLOBAL_FUKUMETRO;
 
 // --- Random number generator ---
 
@@ -62,6 +64,8 @@ struct process {
 
 void append(PROCESS *tprocess) {
 
+	pids++;
+
 	if(last_item != NULL) {
 
 		last_item->next = tprocess;
@@ -73,8 +77,6 @@ void append(PROCESS *tprocess) {
 		last_item = tprocess;
 
 	}
-
-	pids++;
 
 }
 
@@ -89,7 +91,7 @@ void plist() {
 	PROCESS *ptr = handler;
 	int i = 1;
 
-	printf("\n- Program running for %f seconds -----------------------------\n", difftime(time(NULL), start));
+	printf("\n- Program running for %f seconds -----------------------------\n\n", difftime(time(NULL), start));
 
 	while(ptr != NULL) {
 
@@ -101,12 +103,12 @@ void plist() {
 
 	}
 
-	printf("\n-----------------------------------------------------------------\n\n");
-
-	printf("MEMORY USAGE: ");	
+	printf("\n---------- MEMORY USAGE: ");	
 	for(int j = 0; j < MEM_SIZE; j++) {
 		printf("%i ", memory[j]);
 	}
+	
+	printf(" --- RANDOM NUMBER: %i --- Processes generated: %i \n", GLOBAL_FUKUMETRO, pids);
 	
 
 }
@@ -131,7 +133,6 @@ void generate_process() {
 
 	PROCESS *temp = (PROCESS*) malloc(sizeof(PROCESS));
 		temp->pid = pids;
-		pids++;
 		temp->starttime = difftime(time(NULL), start);
 		temp->mem_need = (rand() % MEM_SIZE/2)+1;
 		temp->ctime_need = (rand() % 10)+1;
@@ -343,7 +344,9 @@ void run() {
 
 	while(1) {
 
-		if(rand()%10 < 2) generate_process();
+		GLOBAL_FUKUMETRO = rand()%10;
+
+		if(GLOBAL_FUKUMETRO < 3) generate_process();
 		tick();
 		handle();
 		system("clear");
